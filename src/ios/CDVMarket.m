@@ -15,6 +15,7 @@
 - (void)open:(CDVInvokedUrlCommand *)command
 {
     [self.commandDelegate runInBackground:^{
+            dispatch_async(dispatch_get_main_queue(), ^(void){
         NSArray *args = command.arguments;
         NSString *appId = [args objectAtIndex:0];
         
@@ -29,6 +30,7 @@
         }
         
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+       });
     }];
 }
 
