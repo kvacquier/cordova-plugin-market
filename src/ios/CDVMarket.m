@@ -28,13 +28,19 @@
             #endif
             UIApplication *application = [UIApplication sharedApplication];
             NSURL *URL = [NSURL URLWithString:urlString];
-            [application openURL:URL options:@{} completionHandler:nil];
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            [application openURL:URL options:@{} completionHandler:^(BOOL success) {
+                if (success) {
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                } else {
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Opening returned an error"];
+                }
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }];
         } else {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid application id: null was found"];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
         
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
        });
     }];
 }
