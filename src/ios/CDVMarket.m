@@ -21,9 +21,14 @@
         
         CDVPluginResult *pluginResult;
         if (appId) {
-            NSString *url = [NSString stringWithFormat:@"itms-apps://itunes.apple.com/app/%@", appId];
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
-            
+            #if TARGET_IPHONE_SIMULATOR
+            NSString *urlString = [NSString stringWithFormat:@"https://itunes.apple.com/app/%@", appId];
+            #else
+            NSString *urlString = [NSString stringWithFormat:@"itms-apps://itunes.apple.com/app/%@", appId];
+            #endif
+            UIApplication *application = [UIApplication sharedApplication];
+            NSURL *URL = [NSURL URLWithString:urlString];
+            [application openURL:URL options:@{} completionHandler:nil];
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         } else {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid application id: null was found"];
